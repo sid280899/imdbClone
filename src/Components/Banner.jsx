@@ -12,7 +12,7 @@ function Banner() {
       .then(function (res) {
         // console.log(res.data.results[0].poster_path);
 
-        let data = res.data.results[0];
+        let data = res.data.results[2];
         setDetail(data);
       });
   }, []);
