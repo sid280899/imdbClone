@@ -1,44 +1,62 @@
+import { useEffect, useState } from "react";
+import genreIds from "../Utility/genre";
 function WatchList(props) {
-  let { watchList, handleRemoveFromWatchList } = props;
-  const genreIds = {
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    80: "Crime",
-    99: "Documentary",
-    18: "Drama",
-    10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
-    9648: "Mystery",
-    10749: "Romance",
-    878: "Science Fiction",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
-    37: "Western",
-    10759: "Action & Adventure",
-    10762: "Kids",
-    10763: "News",
-    10764: "Reality",
-    10765: "Sci-Fi & Fantasy",
-    10766: "Soap",
-    10767: "Talk",
-    10768: "War & Politics",
+  let { watchList, handleRemoveFromWatchList, setWatchList } = props;
+  let [genreList, setGenreList] = useState(["All Genres"]);
+  let [currGenre, setCurrGenre] = useState("All Genres");
+  let [Search, setSearch] = useState("");
+
+  let handleFilter = (genre) => {
+    setCurrGenre(genre);
   };
 
+  let handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
+  let sortIncreasing = () => {
+    let sorted = watchList.sort((movieA, movieB) => {
+      return movieA.vote_average - movieB.vote_average;
+    });
+    setWatchList([...sorted]);
+  };
+
+  let sortDecreasing = () => {
+    let sorted = watchList.sort((movieA, movieB) => {
+      return movieB.vote_average - movieA.vote_average;
+    });
+    setWatchList([...sorted]);
+  };
+  useEffect(() => {
+    let temp = watchList.map((movieObj) => {
+      return genreIds[movieObj.genre_ids[0]];
+    });
+    temp = new Set(temp);
+    setGenreList(["All Genres", ...temp]);
+  }, [watchList]);
   return (
     <>
-      <div className="flex justify-center">
-        <div className=" flex justify-center items-center w-[15rem] h-[3rem] bg-blue-400 rounded-xl text-white">
-          All Genres
-        </div>
+      <div className="flex justify-center m-4 flex-wrap">
+        {genreList.map((genre) => {
+          return (
+            <div
+              onClick={() => handleFilter(genre)}
+              key={genre}
+              className={
+                currGenre == genre
+                  ? "m-4 h-[3rem] w-[15rem] bg-blue-400 rounded-xl text-white flex justify-center items-center font-bold "
+                  : "m-4 h-[3rem] w-[15rem] bg-gray-300 rounded-xl text-white flex justify-center items-center font-bold hover:cursor-pointer"
+              }
+            >
+              {genre}
+            </div>
+          );
+        })}
       </div>
       <div className=" flex justify-center my-4">
         <input
+          onChange={handleSearch}
+          value={Search}
           className=" h-[3rem] w-[18rem] border-none outline-none bg-gray-200 px-4 text-lg"
           type="text"
           placeholder="Search for Movies"
@@ -50,11 +68,11 @@ function WatchList(props) {
             <tr>
               <th>Name</th>
               <th className="flex">
-                <div className="p-2">
+                <div onClick={sortIncreasing} className="p-2">
                   <i class="fa-solid fa-circle-chevron-up"></i>
                 </div>
                 <div className="p-2">Ratings</div>
-                <div className="p-2">
+                <div onClick={sortDecreasing} className="p-2">
                   <i class="fa-solid fa-circle-chevron-down"></i>
                 </div>
               </th>
@@ -64,29 +82,42 @@ function WatchList(props) {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {watchList.map((movieObj) => {
-              return (
-                <tr className="border-b-2 ">
-                  <td className="flex items-center px-6 py-4">
-                    <img
-                      className="h-[6rem] w-[10rem]"
-                      src={`https://image.tmdb.org/t/p/original/${movieObj.poster_path}`}
-                      alt=""
-                    />
-                    <div className="mx-4">{movieObj.title}</div>
-                  </td>
-                  <td>{movieObj.vote_average}</td>
-                  <td>{movieObj.popularity}</td>
-                  <td>{genreIds[movieObj.genre_ids[0]]}</td>
-                  <td
-                    onClick={() => handleRemoveFromWatchList(movieObj)}
-                    className="text-red-600 cursor-pointer"
-                  >
-                    Delete
-                  </td>
-                </tr>
-              );
-            })}
+            {watchList
+              .filter((Obj) => {
+                if (currGenre == "All Genres") {
+                  return true;
+                } else {
+                  return genreIds[Obj.genre_ids[0]] == currGenre;
+                }
+              })
+              .filter((movieObj) => {
+                return movieObj.title
+                  .toLowerCase()
+                  .includes(Search.toLowerCase());
+              })
+              .map((movieObj) => {
+                return (
+                  <tr className="border-b-2 ">
+                    <td className="flex items-center px-6 py-4">
+                      <img
+                        className="h-[6rem] w-[10rem]"
+                        src={`https://image.tmdb.org/t/p/original/${movieObj.poster_path}`}
+                        alt=""
+                      />
+                      <div className="mx-4">{movieObj.title}</div>
+                    </td>
+                    <td>{movieObj.vote_average}</td>
+                    <td>{movieObj.popularity}</td>
+                    <td>{genreIds[movieObj.genre_ids[0]]}</td>
+                    <td
+                      onClick={() => handleRemoveFromWatchList(movieObj)}
+                      className="text-red-600 cursor-pointer"
+                    >
+                      Delete
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
           ;
         </table>

@@ -8,18 +8,11 @@ function Movies(props) {
     setWatchList,
     handleAddToWatchList,
     handleRemoveFromWatchList,
+    pageNo,
+    handleNext,
+    handlePrev,
   } = props;
   let [movie, setMovies] = useState([]);
-  let [pageNo, setPageNo] = useState(1);
-
-  console.log(watchList);
-  let handlePrev = () => {
-    if (pageNo > 1) setPageNo(pageNo - 1);
-  };
-
-  let handleNext = () => {
-    setPageNo(pageNo + 1);
-  };
 
   useEffect(() => {
     axios
@@ -33,14 +26,6 @@ function Movies(props) {
         setMovies(res.data.results);
       });
   }, [pageNo]);
-
-  useEffect(() => {
-    let moviesFromLocalStorage = localStorage.getItem("movieApp");
-    if (!moviesFromLocalStorage) {
-      return;
-    }
-    setWatchList(JSON.parse(moviesFromLocalStorage));
-  }, []);
 
   return (
     <div className="p-5">
