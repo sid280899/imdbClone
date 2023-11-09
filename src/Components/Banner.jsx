@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 function Banner() {
-  let [detail, setDetail] = useState({});
+  let [detail, setDetail] = useState(undefined);
 
   useEffect(() => {
     axios
@@ -16,6 +16,10 @@ function Banner() {
         setDetail(data);
       });
   }, []);
+
+  if (detail == undefined) {
+    return;
+  }
   return (
     <div
       className="h-[20vh] md:h-[70vh] bg-cover bg-center flex items-end"

@@ -69,16 +69,15 @@ function WatchList(props) {
               <th>Name</th>
               <th className="flex">
                 <div onClick={sortIncreasing} className="p-2">
-                  <i class="fa-solid fa-circle-chevron-up"></i>
+                  <i className="fa-solid fa-circle-chevron-up"></i>
                 </div>
                 <div className="p-2">Ratings</div>
                 <div onClick={sortDecreasing} className="p-2">
-                  <i class="fa-solid fa-circle-chevron-down"></i>
+                  <i className="fa-solid fa-circle-chevron-down"></i>
                 </div>
               </th>
               <th>Popularity</th>
               <th>Genre</th>
-              <th></th>
             </tr>
           </thead>
           <tbody className="text-gray-700">
@@ -119,7 +118,6 @@ function WatchList(props) {
                 );
               })}
           </tbody>
-          ;
         </table>
       </div>
     </>
